@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khalsa College, Ba - Marksheet & Report Card System</title>
+    <!-- Tailwind CSS for layout and styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .table-input {
+            width: 100%;
+            background: transparent;
+            text-align: center;
+            outline: none;
+        }
+        .table-input:focus {
+            background-color: #fef08a;
+            border-radius: 2px;
+            box-shadow: 0 0 0 2px #f59e0b;
+        }
+
+        /* Editable header and footer fields styling */
+        [contenteditable="true"]:hover {
+            outline: 1px dashed #f59e0b;
+            cursor: pointer;
+        }
+        [contenteditable="true"]:focus {
+            outline: 2px solid #f59e0b;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 0 4px;
+        }
+
+        /* Highlight editable table headers on focus */
+        th[contenteditable="true"]:focus {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            outline: 2px solid #f59e0b !important;
+        }
+        
+        .teacher-initial-input {
+            background: transparent;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            outline: none;
+            color: white;
+        }
+        .teacher-initial-input:focus {
+            background-color: #f59e0b;
+            color: #1e1b4b;
+            border-radius: 2px;
+        }
+
+        /* Page Break for individual report cards */
+        .report-card-page {
+            page-break-after: always;
+            break-after: page;
+        }
+
+        /* Custom Modal Animations */
+        .modal-bg {
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        /* STRICT PRINT STYLING */
+        @media print {
+            .no-print { 
+                display: none !important; 
+            }
+            body { 
+                font-size: 10pt; 
+                background: #fff !important; 
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .max-w-\[1450px\], .max-w-4xl, .max-w-6xl {
+                max-width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            header {
+                background-color: #1e1b4b !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            [contenteditable="true"]:hover, [contenteditable="true"]:focus {
+                outline: none !important;
+                background: transparent !important;
+            }
+            select {
+                appearance: none !important;
+                -webkit-appearance: none !important;
+                border: none !important;
+                background: transparent !important;
+            }
+            table { 
+                width: 100% !important; 
+                border-collapse: collapse !important; 
+            }
+            input.table-input, input.teacher-initial-input {
+                border: none !important;
+                background: transparent !important;
+                color: #000 !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- GLOBAL TOP NAVIGATION BAR FOR MARKSHEETS -->
+    <nav id="globalNav" class="bg-indigo-950 text-white border-b-2 border-amber-500 px-6 py-3 shadow-md flex justify-between items-center no-print hidden">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-amber-500 text-indigo-950 font-black flex items-center justify-center text-sm shadow">
+                KC
+            </div>
+            <div>
+                <h2 class="font-bold text-sm tracking-wide leading-tight">Khalsa College, Ba</h2>
+                <p id="activeModuleBadge" class="text-[11px] text-amber-400 font-medium">Marksheet System</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="switchView('portal')" class="bg-indigo-800 hover:bg-indigo-700 text-amber-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow border border-indigo-700 flex items-center gap-1.5 transition">
+                <span>🏠</span> Return to Main Dashboard
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <div class="flex-1 p-4 md:p-8">
+        
+        <!-- ========================================== -->
+        <!-- 1. PORTAL DASHBOARD VIEW                   -->
+        <!-- ========================================== -->
+        <div id="portalView" class="max-w-5xl mx-auto space-y-8">
+            
+            <!-- Welcome Header Card -->
+            <div class="bg-indigo-900 text-white rounded-2xl p-8 shadow-xl border-b-8 border-amber-500 relative overflow-hidden">
+                <div class="absolute right-0 top-0 opacity-10 translate-x-12 -translate-y-6 pointer-events-none">
+                    <svg width="300" height="300" viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50 5 L60 35 L95 35 L67 55 L78 88 L50 68 L22 88 L33 55 L5 35 L40 35 Z"/>
+                    </svg>
+                </div>
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                    <div class="w-24 h-24 bg-white/10 rounded-2xl p-3 flex items-center justify-center border border-white/20 shadow-inner">
+                        <svg class="w-full h-full text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
+                        </svg>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="inline-block px-3 py-1 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-full border border-amber-500/30">
+                            Khalsa College Marksheet Portal
+                        </div>
+                        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight font-serif uppercase">
+                            Khalsa College, Ba
+                        </h1>
+                        <p class="text-indigo-200 max-w-2xl text-sm leading-relaxed">
+                            Welcome to the Central Academic Master Marksheet Management System. Select a level below to record marks, perform automated statistical analysis, and generate official individual report cards.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Table Card -->
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="p-6 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Select Master Marksheet</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Choose the appropriate mark sheet based on student year levels</p>
+                    </div>
+                    <span class="text-xs font-semibold bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full">
+                        2 Portals Available
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-800 text-white text-xs uppercase font-semibold">
+                            <tr>
+                                <th class="p-4 w-16 text-center">#</th>
+                                <th class="p-4">Marksheet Title</th>
+                                <th class="p-4">Academic Level</th>
+                                <th class="p-4 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <!-- Option 1: Year 9-10 -->
+                            <tr class="hover:bg-slate-50/80 transition">
+                                <td class="p-4 text-center font-bold text-slate-400">1</td>
+                                <td class="p-4">
+                                    <div class="font-bold text-indigo-950 text-base">Year 9 - 10 Master Marksheet</div>
+                                    <div class="text-xs text-slate-500 mt-0.5">Junior Secondary Education Stage</div>
+                                </td>
+                                <td class="p-4">
+                                    <span class="px-2.5 py-1 bg-amber-100 text-amber-900 rounded-md text-xs font-bold">
+                                        Junior Level (Y9-Y10)
+                                    </span>
+                                </td>
+                                <td class="p-4 text-center">
+                                    <button onclick="switchView('y910')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow-md transition flex items-center gap-1.5 mx-auto">
+                                        <span>📊</span> Open Marksheet
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Option 2: Year 11-13 -->
+                            <tr class="hover:bg-slate-50/80 transition">
+                                <td class="p-4 text-center font-bold text-slate-400">2</td>
+                                <td class="p-4">
+                                    <div class="font-bold text-indigo-950 text-base">Year 11 - 13 Master Marksheet</div>
+                                    <div class="text-xs text-slate-500 mt-0.5">Senior Secondary Education Stage</div>
+                                </td>
+                                <td class="p-4">
+                                    <span class="px-2.5 py-1 bg-emerald-100 text-emerald-900 rounded-md text-xs font-bold">
+                                        Senior Level (Y11-Y13)
+                                    </span>
+                                </td>
+                                <td class="p-4 text-center">
+                                    <button onclick="switchView('y1113')" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow-md transition flex items-center gap-1.5 mx-auto">
+                                        <span>📊</span> Open Marksheet
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Feature Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-start gap-4">
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg font-bold text-xl">⌨️</div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Keyboard Navigation</h3>
+                        <p class="text-xs text-slate-500 mt-1">Full arrow key navigation and Enter shortcuts across all marksheet input cells.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-start gap-4">
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-lg font-bold text-xl">📄</div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Instant Report Cards</h3>
+                        <p class="text-xs text-slate-500 mt-1">Generates individual student report cards with official Khalsa College letterheads.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-start gap-4">
+                    <div class="p-3 bg-purple-50 text-purple-600 rounded-lg font-bold text-xl">💾</div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">JSON Data Backups</h3>
+                        <p class="text-xs text-slate-500 mt-1">Export, import, and backup all class data locally with a single click.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 2. YEAR 9-10 MARKSHEET MODULE              -->
+        <!-- ========================================== -->
+        <div id="y910View" class="hidden">
+            <div>
+                <!-- MAIN MARKSHEET VIEW -->
+                <div id="y910MarksheetContainer" class="max-w-[1450px] mx-auto bg-white shadow-xl rounded-xl overflow-hidden border border-slate-200">
+                    
+                    <!-- Header Section -->
+                    <header class="bg-indigo-900 text-white p-6 border-b-4 border-amber-500">
+                        <div class="flex flex-col xl:flex-row justify-between items-center gap-4">
+                            <div>
+                                <h1 id="y910HeaderSchool" contenteditable="true" class="text-2xl font-bold tracking-wide uppercase" title="Click to edit school name">
+                                    Khalsa College, Ba
+                                </h1>
+                                <h2 id="y910HeaderExamTitle" contenteditable="true" class="text-xl font-semibold text-amber-400 mt-1" title="Click to edit exam title">
+                                    Annual Examination
+                                </h2>
+                                <p class="text-sm text-indigo-200 mt-1">
+                                    Year: <span id="y910HeaderYear" contenteditable="true" class="font-bold text-white px-1" title="Click to edit year">9A</span> | 
+                                    Form Teachers: <span id="y910HeaderTeachers" contenteditable="true" class="font-bold text-white px-1" title="Click to edit teachers">Ashik Kapoor</span>
+                                </p>
+                            </div>
+                            
+                            <!-- Action Buttons Toolbar -->
+                            <div class="flex flex-wrap gap-2 no-print">
+                                <button onclick="y910AddNewStudent()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>+</span> Add Student
+                                </button>
+                                <button onclick="y910AddNewSubject()" class="bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>+</span> Add Subject
+                                </button>
+                                <button onclick="y910GenerateReportCards()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>📄</span> Generate Report Cards
+                                </button>
+                                <button onclick="y910ClearAllMarks()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>🗑️</span> Clear Marks
+                                </button>
+                                
+                                <button onclick="y910TriggerJSONLoad()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>📂</span> Load JSON
+                                </button>
+                                <input type="file" id="y910JsonFileInput" accept=".json" class="hidden no-print" onchange="y910ImportFromJSON(event)">
+
+                                <button onclick="y910ExportToJSON()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>💾</span> Save JSON
+                                </button>
+
+                                <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-indigo-950 font-bold px-3 py-2 rounded-lg text-xs shadow transition flex items-center gap-1">
+                                    <span>🖨️</span> Print Marksheet
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Search & Pass/Fail Legend -->
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-wrap gap-4 justify-between items-center no-print">
+                        <div class="relative w-full max-w-xs">
+                            <input type="text" id="y910SearchInput" onkeyup="y910FilterTable()" placeholder="Search student name..." class="w-full pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                            <span class="absolute left-3 top-2.5 text-slate-400">🔍</span>
+                        </div>
+                        <div class="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                            <span>💡</span> Click directly on any subject header to edit its name or click "Add Subject" to add new columns!
+                        </div>
+                        <div class="text-xs text-slate-500 flex gap-4">
+                            <span><span class="inline-block w-3 h-3 bg-red-100 border border-red-400 rounded-full mr-1"></span> Fail (&lt; 50%)</span>
+                            <span><span class="inline-block w-3 h-3 bg-emerald-100 border border-emerald-400 rounded-full mr-1"></span> Pass (&ge; 50%)</span>
+                        </div>
+                    </div>
+
+                    <!-- Master Marksheet Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-center border-collapse" id="y910MarksheetTable">
+                            <thead>
+                                <tr id="y910TableHeaderRow" class="bg-slate-800 text-white font-semibold uppercase tracking-wider border-b border-slate-700">
+                                    <!-- Rendered via JS -->
+                                </tr>
+                            </thead>
+                            <tbody id="y910StudentTbody" class="divide-y divide-slate-200">
+                                <!-- Dynamic student rows render here -->
+                            </tbody>
+                            <tfoot id="y910StatsTfoot" class="bg-slate-100 font-semibold text-slate-700 border-t-2 border-slate-400">
+                                <!-- Dynamic stats summary render here -->
+                            </tfoot>
+                        </table>
+                    </div>
+
+                </div>
+
+                <!-- Y9-10 REPORT CARD CONTAINER -->
+                <div id="y910ReportCardContainer" class="hidden space-y-8 max-w-4xl mx-auto">
+                    <div class="no-print mb-4 flex justify-between items-center bg-white p-4 rounded-xl shadow border">
+                        <button onclick="y910ShowMarksheet()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2">
+                            <span>⬅️</span> Back to Marksheet
+                        </button>
+                        <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-indigo-950 px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2">
+                            <span>🖨️</span> Print All Report Cards (PDF)
+                        </button>
+                    </div>
+
+                    <div id="y910ReportCardsList">
+                        <!-- Dynamic Individual Student Report Cards Inject Here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 3. YEAR 11-13 MARKSHEET MODULE             -->
+        <!-- ========================================== -->
+        <div id="y1113View" class="hidden">
+            <div>
+                <!-- MAIN MARKSHEET VIEW -->
+                <div id="y1113MarksheetContainer" class="max-w-[1450px] mx-auto bg-white shadow-xl rounded-xl overflow-hidden border border-slate-200">
+                    
+                    <!-- Header Section -->
+                    <header class="bg-teal-900 text-white p-6 border-b-4 border-amber-500">
+                        <div class="flex flex-col xl:flex-row justify-between items-center gap-4">
+                            <div>
+                                <h1 id="y1113HeaderSchool" contenteditable="true" class="text-2xl font-bold tracking-wide uppercase" title="Click to edit school name">
+                                    Khalsa College, Ba
+                                </h1>
+                                <h2 id="y1113HeaderExamTitle" contenteditable="true" class="text-xl font-semibold text-amber-400 mt-1" title="Click to edit exam title">
+                                    Annual Examination (Senior Secondary)
+                                </h2>
+                                <p class="text-sm text-teal-200 mt-1">
+                                    Year: <span id="y1113HeaderYear" contenteditable="true" class="font-bold text-white px-1" title="Click to edit year">12C</span> | 
+                                    Form Teachers: <span id="y1113HeaderTeachers" contenteditable="true" class="font-bold text-white px-1" title="Click to edit teachers">Arishma Chandra & Ashik Kapoor</span>
+                                </p>
+                            </div>
+                            
+                            <!-- Action Buttons Toolbar -->
+                            <div class="flex flex-wrap gap-2 no-print">
+                                <button onclick="y1113AddNewStudent()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>+</span> Add Student
+                                </button>
+                                <button onclick="y1113AddNewSubject()" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>+</span> Add Subject
+                                </button>
+                                <button onclick="y1113GenerateReportCards()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>📄</span> Generate Report Cards
+                                </button>
+                                <button onclick="y1113ClearAllMarks()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>🗑️</span> Clear Marks
+                                </button>
+                                
+                                <button onclick="y1113TriggerJSONLoad()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>📂</span> Load JSON
+                                </button>
+                                <input type="file" id="y1113JsonFileInput" accept=".json" class="hidden no-print" onchange="y1113ImportFromJSON(event)">
+
+                                <button onclick="y1113ExportToJSON()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition">
+                                    <span>💾</span> Save JSON
+                                </button>
+
+                                <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-indigo-950 font-bold px-3 py-2 rounded-lg text-xs shadow transition flex items-center gap-1">
+                                    <span>🖨️</span> Print Marksheet
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Search & Pass/Fail Legend -->
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-wrap gap-4 justify-between items-center no-print">
+                        <div class="relative w-full max-w-xs">
+                            <input type="text" id="y1113SearchInput" onkeyup="y1113FilterTable()" placeholder="Search student name..." class="w-full pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm">
+                            <span class="absolute left-3 top-2.5 text-slate-400">🔍</span>
+                        </div>
+                        <div class="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                            <span>💡</span> Click directly on any subject header to edit its name or click "Add Subject" to add new columns!
+                        </div>
+                        <div class="text-xs text-slate-500 flex gap-4">
+                            <span><span class="inline-block w-3 h-3 bg-red-100 border border-red-400 rounded-full mr-1"></span> Fail (&lt; 50%)</span>
+                            <span><span class="inline-block w-3 h-3 bg-emerald-100 border border-emerald-400 rounded-full mr-1"></span> Pass (&ge; 50%)</span>
+                        </div>
+                    </div>
+
+                    <!-- Master Marksheet Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-center border-collapse" id="y1113MarksheetTable">
+                            <thead>
+                                <tr id="y1113TableHeaderRow" class="bg-slate-800 text-white font-semibold uppercase tracking-wider border-b border-slate-700">
+                                    <!-- Dynamic Header Row Rendered via JS -->
+                                </tr>
+                            </thead>
+                            <tbody id="y1113StudentTbody" class="divide-y divide-slate-200">
+                                <!-- Dynamic student rows render here -->
+                            </tbody>
+                            <tfoot id="y1113StatsTfoot" class="bg-slate-100 font-semibold text-slate-700 border-t-2 border-slate-400">
+                                <!-- Dynamic stats summary render here -->
+                            </tfoot>
+                        </table>
+                    </div>
+
+                </div>
+
+                <!-- Y11-13 REPORT CARD CONTAINER -->
+                <div id="y1113ReportCardContainer" class="hidden space-y-8 max-w-4xl mx-auto">
+                    <div class="no-print mb-4 flex justify-between items-center bg-white p-4 rounded-xl shadow border">
+                        <button onclick="y1113ShowMarksheet()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2">
+                            <span>⬅️</span> Back to Marksheet
+                        </button>
+                        <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-indigo-950 px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2">
+                            <span>🖨️</span> Print All Report Cards (PDF)
+                        </button>
+                    </div>
+
+                    <div id="y1113ReportCardsList">
+                        <!-- Dynamic Individual Student Report Cards Inject Here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SYSTEM FOOTER / COPYRIGHT -->
+    <footer class="mt-8 py-6 border-t border-slate-200 bg-white text-center text-xs text-slate-500 font-medium no-print">
+        <p>&copy; 2026 Khalsa College, Ba. Designed and Developed by <span class="font-semibold text-slate-700">Ashik Kapoor</span>.</p>
+    </footer>
+
+    <!-- SCRIPT ENGINE -->
+    <script>
+        // Load the actual Khanda logo from the same folder as this HTML file.
+        // Common image extensions and a "khanda" subfolder are supported.
+        const khandaLogoPaths = [
+            'khanda.png', 'khanda.jpg', 'khanda.jpeg', 'khanda.webp', 'khanda.svg',
+            'khanda/khanda.png', 'khanda/khanda.jpg', 'khanda/khanda.jpeg',
+            'khanda/khanda.webp', 'khanda/khanda.svg'
+        ];
+        function tryNextKhandaLogo(img) {
+            const next = Number(img.dataset.logoIndex || 0) + 1;
+            if (next < khandaLogoPaths.length) {
+                img.dataset.logoIndex = String(next);
+                img.src = khandaLogoPaths[next];
+            } else {
+                img.onerror = null;
+                img.alt = 'Khanda logo not found — place khanda.png beside this HTML file';
+            }
+        }
+
+        // ==========================================
+        // SPA VIEW NAVIGATION CONTROLLER
+        // ==========================================
+        function switchView(viewName) {
+            const portalView = document.getElementById('portalView');
+            const y910View = document.getElementById('y910View');
+            const y1113View = document.getElementById('y1113View');
+            const globalNav = document.getElementById('globalNav');
+            const activeBadge = document.getElementById('activeModuleBadge');
+
+            portalView.classList.add('hidden');
+            y910View.classList.add('hidden');
+            y1113View.classList.add('hidden');
+
+            if (viewName === 'portal') {
+                portalView.classList.remove('hidden');
+                globalNav.classList.add('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (viewName === 'y910') {
+                y910View.classList.remove('hidden');
+                globalNav.classList.remove('hidden');
+                activeBadge.innerText = "Year 9 - 10 Junior Master Marksheet";
+                y910RenderTableHeader();
+                y910RenderTable();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (viewName === 'y1113') {
+                y1113View.classList.remove('hidden');
+                globalNav.classList.remove('hidden');
+                activeBadge.innerText = "Year 11 - 13 Senior Master Marksheet";
+                y1113RenderTable();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // ==========================================
+        // YEAR 9-10 MARKSHEET LOGIC ENGINE
+        // ==========================================
+        const y910PresetComments = {
+            high: "An outstanding academic performance! Demonstrates exceptional understanding, critical thinking, and strong dedication to excellence. Keep up the brilliant work!",
+            middle: "Demonstrates good understanding and steady progress in coursework. Consistent effort and extra focus on key subjects will help achieve higher results.",
+            low: "Requires increased focus and consistent effort across core subjects. Regular revision, completing all classwork, and seeking extra help are strongly recommended."
+        };
+
+        let y910Subjects = ['ENG', 'MATHS', 'COMM', 'SOCIAL', 'BSC', 'AGRI', 'BA', 'BTECH', 'HECO'];
+        let y910FormTeacherInitials = "ASK / AC";
+        let y910TeacherInitials = {
+            'ENG': 'RV', 'MATHS': 'AS', 'COMM': 'NP', 'SOCIAL': 'AC', 
+            'BSC': 'MD', 'AGRI': 'SSM', 'BA': 'CR', 'BTECH': 'AK', 'HECO': 'PN'
+        };
+
+        let y910Students = [
+            { id: 1, name: "Chand, Pritanshu Nandika", fatherName: "Nilesh Chand", conduct: "Very Good", absentDays: "2 out of 90 days", peGrade: "A", fleGrade: "B", remarkType: "", remark: "", marks: { ENG: 55, MATHS: 62, COMM: 50, SOCIAL: 60, BSC: 58, AGRI: 65, BA: 70 } },
+            { id: 2, name: "Chand, Shresthi Supriya", fatherName: "Suresh Chand", conduct: "Excellent", absentDays: "0 out of 90 days", peGrade: "A", fleGrade: "A", remarkType: "", remark: "", marks: { ENG: 78, MATHS: 82, COMM: 88, SOCIAL: 80, BSC: 75, BTECH: 90, HECO: 84 } },
+            { id: 3, name: "Dauloloma, Lepania", fatherName: "Ratu Jnr", conduct: "Good", absentDays: "5 out of 90 days", peGrade: "B", fleGrade: "B", remarkType: "", remark: "", marks: { ENG: 42, MATHS: 45, COMM: 52, SOCIAL: 48, BSC: 50, AGRI: 55, BTECH: 58 } }
+        ];
+
+        function y910AddNewSubject() {
+            let newSubName = prompt("Enter new subject name/code (e.g., MUSIC, ART, HINDI):");
+            if (newSubName) {
+                let cleanName = newSubName.trim().toUpperCase();
+                if (cleanName && !y910Subjects.includes(cleanName)) {
+                    y910Subjects.push(cleanName);
+                    y910TeacherInitials[cleanName] = 'TBA';
+                    y910RenderTableHeader();
+                    y910RenderTable();
+                } else if (y910Subjects.includes(cleanName)) {
+                    alert("Subject already exists!");
+                }
+            }
+        }
+
+        function y910RenderTableHeader() {
+            const headerRow = document.getElementById('y910TableHeaderRow');
+            let html = `
+                <th class="p-2 border border-slate-600 w-10">No</th>
+                <th class="p-2 border border-slate-600 text-left min-w-[180px]">Student Name</th>
+            `;
+
+            y910Subjects.forEach((sub, idx) => {
+                html += `<th contenteditable="true" onblur="y910UpdateSubjectName(${idx}, this.innerText)" class="p-2 border border-slate-600" title="Click to edit subject name">${sub}</th>`;
+            });
+
+            html += `
+                <th class="p-2 border border-slate-600 bg-indigo-950 font-bold">Total</th>
+                <th class="p-2 border border-slate-600 bg-slate-900">%</th>
+                <th class="p-2 border border-slate-600 bg-slate-900">Grade</th>
+                <th class="p-2 border border-slate-600 bg-slate-900 no-print w-12">Action</th>
+            `;
+
+            headerRow.innerHTML = html;
+        }
+
+        function y910UpdateSubjectName(index, newName) {
+            let cleanName = newName.trim().toUpperCase();
+            let oldName = y910Subjects[index];
+            if (cleanName && oldName !== cleanName) {
+                y910Subjects[index] = cleanName;
+                y910Students.forEach(s => {
+                    if (s.marks[oldName] !== undefined) {
+                        s.marks[cleanName] = s.marks[oldName];
+                        delete s.marks[oldName];
+                    }
+                });
+                if (y910TeacherInitials[oldName]) {
+                    y910TeacherInitials[cleanName] = y910TeacherInitials[oldName];
+                    delete y910TeacherInitials[oldName];
+                }
+                y910RenderTableHeader();
+                y910RenderTable();
+            }
+        }
+
+        function y910GetSubjectAverage(sub) {
+            let vals = y910Students
+                .map(s => s.marks[sub])
+                .filter(v => v !== undefined && v !== '' && v !== 'ABS')
+                .map(v => parseFloat(v));
+            if (vals.length === 0) return '-';
+            let avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+            return avg.toFixed(1);
+        }
+
+        function y910GetSubjectGrade(markVal) {
+            if (markVal === 'ABS' || markVal === undefined || markVal === null || markVal === '') return 'ABS';
+            let num = parseFloat(markVal);
+            if (isNaN(num)) return '-';
+            if (num >= 80) return 'A';
+            if (num >= 65) return 'B';
+            if (num >= 50) return 'C';
+            return 'D';
+        }
+
+        function y910CalculateStudentStats(student) {
+            let total = 0;
+            let satCount = 0;
+
+            y910Subjects.forEach((sub) => {
+                let val = student.marks[sub];
+                if (val !== undefined && val !== null && val !== '' && val !== 'ABS') {
+                    total += parseFloat(val) || 0;
+                    satCount++;
+                }
+            });
+
+            let percentage = y910Subjects.length > 0 ? (total / (y910Subjects.length * 100)) * 100 : 0;
+
+            let grade = 'D';
+            if (percentage >= 80) grade = 'A';
+            else if (percentage >= 65) grade = 'B';
+            else if (percentage >= 50) grade = 'C';
+
+            return { total, percentage, grade };
+        }
+
+        function y910RenderTable() {
+            const tbody = document.getElementById('y910StudentTbody');
+            tbody.innerHTML = '';
+
+            y910Students.forEach((student, index) => {
+                const stats = y910CalculateStudentStats(student);
+                const tr = document.createElement('tr');
+                tr.className = index % 2 === 0 ? 'bg-white hover:bg-indigo-50/50' : 'bg-slate-50 hover:bg-indigo-50/50';
+
+                let rowHTML = `
+                    <td class="p-2 border border-slate-200 font-semibold text-slate-500">${index + 1}</td>
+                    <td class="p-2 border border-slate-200 text-left font-medium text-slate-900">
+                        <input type="text" value="${student.name}" onchange="y910UpdateName(${index}, this.value)" class="table-input text-left font-medium" data-row="${index}" data-col="-1" onkeydown="y910HandleKeyDown(event)">
+                    </td>
+                `;
+
+                y910Subjects.forEach((sub, subIdx) => {
+                    let val = student.marks[sub] !== undefined ? student.marks[sub] : '';
+                    rowHTML += `
+                        <td class="p-1 border border-slate-200">
+                            <input type="text" value="${val}" onchange="y910UpdateMark(${index}, '${sub}', this.value)" class="table-input font-mono ${val === 'ABS' ? 'text-red-500 font-bold' : ''}" data-row="${index}" data-col="${subIdx}" onkeydown="y910HandleKeyDown(event)">
+                        </td>
+                    `;
+                });
+
+                const gradeColor = stats.grade === 'A' || stats.grade === 'B' ? 'bg-emerald-100 text-emerald-800' : 
+                                 stats.grade === 'C' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
+
+                rowHTML += `
+                    <td class="p-2 border border-slate-200 font-bold font-mono text-slate-800">${stats.total}</td>
+                    <td class="p-2 border border-slate-200 font-bold font-mono">${stats.percentage.toFixed(1)}%</td>
+                    <td class="p-2 border border-slate-200 font-bold"><span class="px-2 py-0.5 rounded text-xs ${gradeColor}">${stats.grade}</span></td>
+                    <td class="p-2 border border-slate-200 no-print">
+                        <button onclick="y910DeleteStudent(${index})" class="text-slate-400 hover:text-rose-600 transition font-bold text-sm" title="Delete Student">🗑️</button>
+                    </td>
+                `;
+
+                tr.innerHTML = rowHTML;
+                tbody.appendChild(tr);
+            });
+
+            y910RenderStatsFooter();
+        }
+
+        function y910HandleKeyDown(event) {
+            const currentInput = event.target;
+            let r = parseInt(currentInput.getAttribute('data-row'));
+            let c = parseInt(currentInput.getAttribute('data-col'));
+
+            if (['ArrowUp', 'ArrowDown', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+                event.preventDefault();
+            } else {
+                return;
+            }
+
+            let currentVal = currentInput.value.trim().toUpperCase();
+            if (c === -1) {
+                y910Students[r].name = currentInput.value;
+            } else {
+                const sub = y910Subjects[c];
+                y910Students[r].marks[sub] = currentVal === 'ABS' ? 'ABS' : currentVal;
+            }
+
+            let targetRow = r;
+            let targetCol = c;
+
+            switch(event.key) {
+                case 'ArrowRight':
+                    if (c < y910Subjects.length - 1) {
+                        targetCol = c + 1;
+                    } else if (r < y910Students.length - 1) {
+                        targetRow = r + 1;
+                        targetCol = 0;
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (c > 0) {
+                        targetCol = c - 1;
+                    } else if (r > 0) {
+                        targetRow = r - 1;
+                        targetCol = y910Subjects.length - 1;
+                    }
+                    break;
+                case 'ArrowDown':
+                case 'Enter':
+                    if (r < y910Students.length - 1) {
+                        targetRow = r + 1;
+                    }
+                    break;
+                case 'ArrowUp':
+                    if (r > 0) {
+                        targetRow = r - 1;
+                    }
+                    break;
+            }
+
+            y910RenderTable();
+
+            requestAnimationFrame(() => {
+                const nextInput = document.querySelector(`#y910StudentTbody input[data-row="${targetRow}"][data-col="${targetCol}"]`);
+                if (nextInput) {
+                    nextInput.focus();
+                    nextInput.select();
+                }
+            });
+        }
+
+        function y910UpdateFormTeacherInitials(val) {
+            y910FormTeacherInitials = val.trim();
+        }
+
+        function y910UpdateStudentField(index, field, val) {
+            y910Students[index][field] = val;
+        }
+
+        function y910RenderStatsFooter() {
+            const tfoot = document.getElementById('y910StatsTfoot');
+            tfoot.innerHTML = '';
+
+            let satRow = `<tr class="bg-slate-200"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">No. Sat</td>`;
+            let passRow = `<tr class="bg-slate-100"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">No. Pass</td>`;
+            let passPctRow = `<tr class="bg-slate-200"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">% Pass</td>`;
+            let highRow = `<tr class="bg-slate-100"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">Highest Mark</td>`;
+            let lowRow = `<tr class="bg-slate-200"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">Lowest Mark</td>`;
+            let avgRow = `<tr class="bg-slate-100"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">Average</td>`;
+            let teacherRow = `<tr class="bg-indigo-900 text-white"><td colspan="2" class="p-2 text-right border border-slate-700 font-bold">Teacher Initial</td>`;
+
+            y910Subjects.forEach(sub => {
+                let vals = y910Students.map(s => s.marks[sub]).filter(v => v !== undefined && v !== '' && v !== 'ABS').map(v => parseFloat(v));
+                let sat = vals.length;
+                let passes = vals.filter(v => v >= 50).length;
+                let passPct = sat > 0 ? ((passes / sat) * 100).toFixed(0) + '%' : '0%';
+                let high = sat > 0 ? Math.max(...vals) : '-';
+                let low = sat > 0 ? Math.min(...vals) : '-';
+                let avg = y910GetSubjectAverage(sub);
+
+                satRow += `<td class="p-1 border border-slate-300 font-mono">${sat}</td>`;
+                passRow += `<td class="p-1 border border-slate-300 font-mono text-emerald-700">${passes}</td>`;
+                passPctRow += `<td class="p-1 border border-slate-300 font-mono">${passPct}</td>`;
+                highRow += `<td class="p-1 border border-slate-300 font-mono text-indigo-700">${high}</td>`;
+                lowRow += `<td class="p-1 border border-slate-300 font-mono text-red-600">${low}</td>`;
+                avgRow += `<td class="p-1 border border-slate-300 font-mono">${avg}</td>`;
+                
+                teacherRow += `
+                    <td class="p-1 border border-slate-700 font-bold">
+                        <input type="text" value="${y910TeacherInitials[sub] || ''}" onchange="y910UpdateTeacherInitial('${sub}', this.value)" class="teacher-initial-input" title="Click to edit teacher initial">
+                    </td>`;
+            });
+
+            const totalStats = y910Students.map(s => y910CalculateStudentStats(s));
+            const overallPass = totalStats.filter(s => s.percentage >= 50).length;
+            const overallPassPct = y910Students.length > 0 ? ((overallPass / y910Students.length) * 100).toFixed(0) + '%' : '0%';
+
+            satRow += `<td colspan="3" class="border border-slate-300"></td><td class="border border-slate-300 no-print"></td></tr>`;
+            passRow += `<td colspan="3" class="border border-slate-300 text-emerald-700 font-bold">Overall Pass: ${overallPass}</td><td class="border border-slate-300 no-print"></td></tr>`;
+            passPctRow += `<td colspan="3" class="border border-slate-300 font-bold">Overall % Pass: ${overallPassPct}</td><td class="border border-slate-300 no-print"></td></tr>`;
+            highRow += `<td colspan="3" class="border border-slate-300"></td><td class="border border-slate-300 no-print"></td></tr>`;
+            lowRow += `<td colspan="3" class="border border-slate-300"></td><td class="border border-slate-300 no-print"></td></tr>`;
+            avgRow += `<td colspan="3" class="border border-slate-300"></td><td class="border border-slate-300 no-print"></td></tr>`;
+            
+            teacherRow += `
+                <td colspan="3" class="border border-slate-700 font-bold bg-indigo-950 text-amber-400">
+                    <span id="y910FormTeachersInitials" contenteditable="true" onblur="y910UpdateFormTeacherInitials(this.innerText)" title="Click to edit form teacher initials">
+                        ${y910FormTeacherInitials}
+                    </span>
+                </td>
+                <td class="border border-slate-700 no-print"></td>
+            </tr>`;
+
+            tfoot.innerHTML = satRow + passRow + passPctRow + highRow + lowRow + avgRow + teacherRow;
+        }
+
+        function y910HandleRemarkSelect(index, type) {
+            const box = document.getElementById(`y910RemarkBox_${index}`);
+            if (type === 'high') {
+                box.innerText = y910PresetComments.high;
+                y910Students[index].remark = y910PresetComments.high;
+                y910Students[index].remarkType = 'high';
+            } else if (type === 'middle') {
+                box.innerText = y910PresetComments.middle;
+                y910Students[index].remark = y910PresetComments.middle;
+                y910Students[index].remarkType = 'middle';
+            } else if (type === 'low') {
+                box.innerText = y910PresetComments.low;
+                y910Students[index].remark = y910PresetComments.low;
+                y910Students[index].remarkType = 'low';
+            } else if (type === 'custom') {
+                y910Students[index].remarkType = 'custom';
+                box.focus();
+            }
+        }
+
+        function y910UpdateStudentRemark(index, text) {
+            y910Students[index].remark = text.trim();
+        }
+
+        function y910GenerateReportCards() {
+            document.getElementById('y910MarksheetContainer').classList.add('hidden');
+            const container = document.getElementById('y910ReportCardContainer');
+            const list = document.getElementById('y910ReportCardsList');
+            container.classList.remove('hidden');
+            list.innerHTML = '';
+
+            const examTitle = document.getElementById('y910HeaderExamTitle').innerText.trim();
+            const yearGroup = document.getElementById('y910HeaderYear').innerText.trim();
+            const formTeachers = document.getElementById('y910HeaderTeachers').innerText.trim();
+
+            const allPercentages = y910Students.map(s => y910CalculateStudentStats(s).percentage);
+            const classAveragePct = (allPercentages.reduce((a, b) => a + b, 0) / (y910Students.length || 1)).toFixed(1);
+
+            y910Students.forEach((student, index) => {
+                const stats = y910CalculateStudentStats(student);
+
+                let currentType = student.remarkType;
+                if (!currentType) {
+                    if (stats.percentage >= 80) currentType = 'high';
+                    else if (stats.percentage >= 50) currentType = 'middle';
+                    else currentType = 'low';
+                    student.remarkType = currentType;
+                }
+
+                let currentRemark = student.remark;
+                if (!currentRemark && y910PresetComments[currentType]) {
+                    currentRemark = y910PresetComments[currentType];
+                    student.remark = currentRemark;
+                }
+
+                let subjectRowsHTML = '';
+                y910Subjects.forEach(sub => {
+                    let val = student.marks[sub];
+                    if (val !== undefined && val !== '' && val !== null) {
+                        let subGrade = y910GetSubjectGrade(val);
+                        let subAvg = y910GetSubjectAverage(sub);
+                        
+                        let gradeColor = 'text-slate-800';
+                        if (subGrade === 'A' || subGrade === 'B') gradeColor = 'text-emerald-700 font-bold';
+                        else if (subGrade === 'C') gradeColor = 'text-blue-700 font-bold';
+                        else if (subGrade === 'D' || subGrade === 'ABS') gradeColor = 'text-rose-600 font-bold';
+
+                        subjectRowsHTML += `
+                            <tr class="border-b border-slate-200">
+                                <td class="p-2 font-medium text-left">${sub}</td>
+                                <td class="p-2 font-bold font-mono">${val}</td>
+                                <td class="p-2 font-mono ${gradeColor}">${subGrade}</td>
+                                <td class="p-2 text-slate-600 font-mono font-semibold">${subAvg}</td>
+                                <td class="p-2 text-slate-600 font-bold">${y910TeacherInitials[sub] || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                if (!subjectRowsHTML) {
+                    subjectRowsHTML = `<tr><td colspan="5" class="p-4 text-slate-400 italic">No subject marks recorded.</td></tr>`;
+                }
+
+                const cardHTML = `
+                    <div class="report-card-page bg-white border border-slate-300 rounded-xl p-8 shadow-md mb-8">
+                        
+                        <!-- OFFICIAL LETTERHEAD HEADER -->
+                        <div class="border-2 border-blue-900 rounded-2xl p-4 text-center mb-1 relative bg-white">
+                            <div class="flex items-center justify-between px-2">
+                                <div class="w-20 h-20 flex items-center justify-center">
+                                    <img src="khanda.png" data-logo-index="0" onerror="tryNextKhandaLogo(this)" alt="Khanda Logo" class="w-full h-full object-contain">
+                                </div>
+
+                                <div class="flex-1 px-4">
+                                    <h1 class="text-3xl md:text-5xl font-black text-blue-900 tracking-wider font-serif uppercase">
+                                        KHALSA COLLEGE
+                                    </h1>
+                                    <p class="text-l font-bold text-blue-900 mt-1">
+                                        P. O. Box, 171, Ba, Fiji Islands
+                                    </p>
+                                    <p class="text-l text-blue-900 font-semibold">
+                                        Telephone: 6674451/ Fax: (679) 6675766/ Email: <a href="mailto:info@khalsafiji.com" class="underline text-blue-800">info@khalsafiji.com</a>
+                                    </p>
+                                </div>
+
+                                <div class="w-20 h-20 flex items-center justify-center">
+                                    <img src="khanda.png" data-logo-index="0" onerror="tryNextKhandaLogo(this)" alt="Khanda Logo" class="w-full h-full object-contain">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Managing Authority Banner -->
+                        <div class="text-center mb-6">
+                            <p class="text-xs font-black text-blue-950 uppercase tracking-tight">
+                                (MANAGING AUTHORITY: SIKH EDUCATIONAL SOCIETY OF FIJI)
+                            </p>
+                            <div class="flex justify-between items-center text-xs font-bold text-black mt-1 px-2 border-b border-slate-300 pb-2">
+                                <span>PRINCIPAL: Navin Singh</span>
+                                <span>MANAGER: Gurbhajan Singh</span>
+                            </div>
+                        </div>
+
+                        <!-- Exam & Class Info -->
+                        <div class="text-center mb-4 bg-slate-100 py-2 rounded-lg border border-slate-200">
+                            <h2 class="text-base font-bold text-indigo-950 uppercase">${examTitle}</h2>
+                            <p class="text-xs text-slate-600 mt-0.5">Year Level: <span class="font-bold text-slate-900">${yearGroup}</span> | Form Teachers: <span class="font-bold text-slate-900">${formTeachers}</span></p>
+                        </div>
+
+                        <!-- Student Information -->
+                        <div class="bg-slate-50 p-3 rounded-lg mb-4 border border-slate-200 flex justify-between items-center">
+                            <div class="grid grid-cols-2 gap-4 flex-1 pr-4">
+                                <div>
+                                    <p class="text-[10px] text-slate-500 uppercase font-semibold">Student Name</p>
+                                    <p contenteditable="true" onblur="y910UpdateStudentField(${index}, 'name', this.innerText)" class="text-base font-bold text-slate-900 cursor-pointer hover:bg-slate-200/50 rounded px-1">${student.name}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-slate-500 uppercase font-semibold">Father's Name</p>
+                                    <p contenteditable="true" onblur="y910UpdateStudentField(${index}, 'fatherName', this.innerText)" class="text-base font-semibold text-slate-800 cursor-pointer hover:bg-slate-200/50 rounded px-1">${student.fatherName || 'Enter Father\'s Name'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subject Breakdown Table -->
+                        <table class="w-full text-center text-xs border border-slate-200 rounded-lg overflow-hidden mb-4">
+                            <thead class="bg-slate-800 text-white font-semibold uppercase">
+                                <tr>
+                                    <th class="p-2 text-left">Subject</th>
+                                    <th class="p-2">Marks Gained</th>
+                                    <th class="p-2">Grade</th>
+                                    <th class="p-2">Average</th>
+                                    <th class="p-2">Teacher</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${subjectRowsHTML}
+                            </tbody>
+                        </table>
+
+                        <!-- Results Summary -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 text-center">
+                            <div class="p-2.5 bg-indigo-50 border border-indigo-200 rounded-lg">
+                                <p class="text-[10px] uppercase font-bold text-indigo-600">Grand Total</p>
+                                <p class="text-base font-bold text-indigo-900 font-mono">${stats.total}</p>
+                            </div>
+                            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg">
+                                <p class="text-[10px] uppercase font-bold text-emerald-700">Percentage (%)</p>
+                                <p class="text-base font-bold text-emerald-900 font-mono">${stats.percentage.toFixed(1)}%</p>
+                            </div>
+                            <div class="p-2.5 bg-purple-50 border border-purple-200 rounded-lg">
+                                <p class="text-[10px] uppercase font-bold text-purple-700">Overall Grade</p>
+                                <p class="text-base font-bold text-purple-900 font-mono">${stats.grade}</p>
+                            </div>
+                        </div>
+
+                        <!-- Class Average Indicator -->
+                        <div class="text-xs text-slate-500 mb-4 bg-slate-50 p-2 rounded text-center border">
+                            Class Average Benchmark: <span class="font-bold text-slate-800">${classAveragePct}%</span>
+                        </div>
+
+                        <!-- CORE NON-ACADEMIC SUBJECT GRADES, CONDUCT & ATTENDANCE -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
+                            <div>
+                                <h4 class="font-bold uppercase text-indigo-950 mb-2 border-b pb-1">Core Non-Academic Subjects</h4>
+                                <div class="space-y-1.5">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-slate-700">Physical Education:</span>
+                                        <select onchange="y910UpdateStudentField(${index}, 'peGrade', this.value)" class="bg-white border rounded px-2 py-0.5 font-bold text-indigo-900 outline-none">
+                                            <option value="A" ${student.peGrade === 'A' ? 'selected' : ''}>A</option>
+                                            <option value="B" ${student.peGrade === 'B' ? 'selected' : ''}>B</option>
+                                            <option value="C" ${student.peGrade === 'C' ? 'selected' : ''}>C</option>
+                                            <option value="D" ${student.peGrade === 'D' ? 'selected' : ''}>D</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-slate-700">FLE (Family Life Education):</span>
+                                        <select onchange="y910UpdateStudentField(${index}, 'fleGrade', this.value)" class="bg-white border rounded px-2 py-0.5 font-bold text-indigo-900 outline-none">
+                                            <option value="A" ${student.fleGrade === 'A' ? 'selected' : ''}>A</option>
+                                            <option value="B" ${student.fleGrade === 'B' ? 'selected' : ''}>B</option>
+                                            <option value="C" ${student.fleGrade === 'C' ? 'selected' : ''}>C</option>
+                                            <option value="D" ${student.fleGrade === 'D' ? 'selected' : ''}>D</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Conduct & Attendance -->
+                            <div>
+                                <h4 class="font-bold uppercase text-indigo-950 mb-2 border-b pb-1">Conduct & Attendance</h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <label class="font-medium text-slate-700">Conduct:</label>
+                                        <select onchange="y910UpdateStudentField(${index}, 'conduct', this.value)" class="bg-white border rounded px-2 py-0.5 font-semibold text-slate-800 outline-none">
+                                            <option value="Excellent" ${student.conduct === 'Excellent' ? 'selected' : ''}>Excellent</option>
+                                            <option value="Very Good" ${student.conduct === 'Very Good' ? 'selected' : ''}>Very Good</option>
+                                            <option value="Good" ${student.conduct === 'Good' ? 'selected' : ''}>Good</option>
+                                            <option value="Satisfactory" ${student.conduct === 'Satisfactory' ? 'selected' : ''}>Satisfactory</option>
+                                            <option value="Needs Improvement" ${student.conduct === 'Needs Improvement' ? 'selected' : ''}>Needs Improvement</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-slate-700">Absent:</span>
+                                        <span contenteditable="true" onblur="y910UpdateStudentField(${index}, 'absentDays', this.innerText)" class="font-semibold text-slate-800 bg-white border rounded px-2 py-0.5 cursor-pointer hover:bg-amber-50">
+                                            ${student.absentDays || '0 out of 90 days'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Editable Comments with Preset Dropdown -->
+                        <div class="space-y-2 border-t border-slate-200 pt-3">
+                            <div class="flex flex-wrap justify-between items-center gap-2">
+                                <label class="block text-xs font-bold uppercase text-slate-600">Form Teacher's Remarks:</label>
+                                <select onchange="y910HandleRemarkSelect(${index}, this.value)" class="text-xs border border-indigo-300 rounded px-2 py-1 bg-indigo-50 font-semibold text-indigo-900 outline-none no-print hover:bg-indigo-100 transition">
+                                    <option value="high" ${student.remarkType === 'high' ? 'selected' : ''}>🌟 High Achiever Comment</option>
+                                    <option value="middle" ${student.remarkType === 'middle' ? 'selected' : ''}>👍 Middle Achiever Comment</option>
+                                    <option value="low" ${student.remarkType === 'low' ? 'selected' : ''}>⚠️ Low Achiever Comment</option>
+                                    <option value="custom" ${student.remarkType === 'custom' ? 'selected' : ''}>✏️ Custom / Direct Edit</option>
+                                </select>
+                            </div>
+                            <div id="y910RemarkBox_${index}" contenteditable="true" onblur="y910UpdateStudentRemark(${index}, this.innerText)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded text-xs min-h-[50px] text-slate-800 leading-relaxed focus:bg-white focus:outline-indigo-500" title="Click to edit remark text">
+                                ${currentRemark}
+                            </div>
+                        </div>
+
+                        <!-- Signatures -->
+                        <div class="pt-6 flex justify-between items-end text-xs font-bold text-slate-600">
+                            <div>
+                                <p class="border-t border-slate-400 pt-1 w-56 text-center">Signature of Parent/Guardian</p>
+                            </div>
+                            <div>
+                                <p class="border-t border-slate-400 pt-1 w-64 text-center">Principal/ V. Principal/ Asst. Principal</p>
+                            </div>
+                        </div>
+
+                        <!-- Invalidating Disclaimer -->
+                        <div class="pt-4 text-center">
+                            <p class="text-[9px] text-slate-500 italic tracking-tight">
+                                * Note: Alterations, erasures or use of correcting fluid automatically invalidate this document.
+                            </p>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += cardHTML;
+            });
+        }
+
+        function y910ShowMarksheet() {
+            document.getElementById('y910ReportCardContainer').classList.add('hidden');
+            document.getElementById('y910MarksheetContainer').classList.remove('hidden');
+        }
+
+        function y910UpdateTeacherInitial(sub, val) {
+            y910TeacherInitials[sub] = val.trim().toUpperCase();
+        }
+
+        function y910UpdateMark(index, sub, val) {
+            y910Students[index].marks[sub] = val.trim().toUpperCase() === 'ABS' ? 'ABS' : val;
+            y910RenderTable();
+        }
+
+        function y910UpdateName(index, val) {
+            y910Students[index].name = val;
+        }
+
+        function y910AddNewStudent() {
+            y910Students.push({ 
+                id: y910Students.length + 1, 
+                name: "New Student Name", 
+                fatherName: "Father's Name",
+                conduct: "Good",
+                absentDays: "0 out of 90 days",
+                peGrade: "B",
+                fleGrade: "B",
+                remarkType: "",
+                remark: "",
+                marks: {} 
+            });
+            y910RenderTable();
+        }
+
+        function y910DeleteStudent(index) {
+            const studentName = y910Students[index].name || "this student";
+            if (confirm(`Are you sure you want to delete ${studentName}?`)) {
+                y910Students.splice(index, 1);
+                y910RenderTable();
+            }
+        }
+
+        function y910ClearAllMarks() {
+            if (confirm("Clear all marks for Year 9-10?")) {
+                y910Students.forEach(s => s.marks = {});
+                y910RenderTable();
+            }
+        }
+
+        // Save As: supported browsers let users choose both the filename and folder.
+        // Other browsers use a named download and their configured download location.
+        async function saveMarksheetJSON(exportData, suggestedName) {
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            if (typeof window.showSaveFilePicker === 'function') {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName,
+                        types: [{ description: 'JSON data file', accept: { 'application/json': ['.json'] } }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') return; // User cancelled.
+                    console.warn('Save As unavailable; using browser download:', error);
+                }
+            }
+            const requestedName = prompt('Enter a name for your JSON backup:', suggestedName);
+            if (requestedName === null) return;
+            let filename = requestedName.trim().replace(/[\\/:*?"<>|]/g, '_');
+            if (!filename) return alert('Please enter a filename.');
+            if (!filename.toLowerCase().endsWith('.json')) filename += '.json';
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 60000);
+        }
+
+        function y910ExportToJSON() {
+            const exportData = {
+                school: document.getElementById('y910HeaderSchool').innerText.trim(),
+                exam: document.getElementById('y910HeaderExamTitle').innerText.trim(),
+                year: document.getElementById('y910HeaderYear').innerText.trim(),
+                formTeachers: document.getElementById('y910HeaderTeachers').innerText.trim(),
+                subjects: y910Subjects,
+                formTeacherInitials: y910FormTeacherInitials,
+                teacherInitials: y910TeacherInitials,
+                exportedAt: new Date().toISOString(),
+                students: y910Students
+            };
+            saveMarksheetJSON(exportData, `Year_9-10_${exportData.year.replace(/[^a-zA-Z0-9_-]/g, '_')}_${exportData.exam.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`);
+        }
+
+        function y910TriggerJSONLoad() {
+            document.getElementById('y910JsonFileInput').click();
+        }
+
+        function y910ImportFromJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    if (data.school) document.getElementById('y910HeaderSchool').innerText = data.school;
+                    if (data.exam) document.getElementById('y910HeaderExamTitle').innerText = data.exam;
+                    if (data.year) document.getElementById('y910HeaderYear').innerText = data.year;
+                    if (data.formTeachers) {
+                        document.getElementById('y910HeaderTeachers').innerText = Array.isArray(data.formTeachers) 
+                            ? data.formTeachers.join(' & ') 
+                            : data.formTeachers;
+                    }
+                    if (data.subjects && Array.isArray(data.subjects)) {
+                        y910Subjects = data.subjects;
+                    }
+                    if (data.formTeacherInitials) {
+                        y910FormTeacherInitials = data.formTeacherInitials;
+                    }
+                    if (data.teacherInitials) {
+                        y910TeacherInitials = { ...y910TeacherInitials, ...data.teacherInitials };
+                    }
+
+                    y910Students = Array.isArray(data) ? data : (data.students || []);
+                    y910RenderTableHeader();
+                    y910RenderTable();
+                } catch (err) {
+                    alert("Error loading JSON file!");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function y910FilterTable() {
+            let input = document.getElementById("y910SearchInput").value.toUpperCase();
+            let rows = document.querySelectorAll("#y910StudentTbody tr");
+            rows.forEach(row => {
+                let nameInput = row.querySelector("td:nth-child(2) input");
+                if (nameInput) {
+                    let text = nameInput.value || "";
+                    row.style.display = text.toUpperCase().indexOf(input) > -1 ? "" : "none";
+                }
+            });
+        }
+
+
+        // ==========================================
+        // YEAR 11-13 MARKSHEET LOGIC ENGINE
+        // ==========================================
+        let y1113Subjects = ['ENG', 'MATHS', 'HST', 'GEO', 'BA', 'ECO', 'COMP', 'HECO', 'VVV', 'HIN', 'AT', 'TD', 'AGR'];
+        let y1113FormTeacherInitials = "AC / ASK";
+        let y1113TeacherInitials = {
+            'ENG': 'RV', 'MATHS': 'AS', 'HST': 'RG', 'GEO': 'AC', 'BA': 'CR', 
+            'ECO': 'MC', 'COMP': 'SC/CR', 'HECO': 'PN', 'VVV': 'AV', 'HIN': 'MS', 
+            'AT': 'VP', 'TD': 'AK', 'AGR': 'SSM'
+        };
+
+        let y1113Students = [
+            { id: 1, name: "Chand, Pritanshu Nandika", fatherName: "Nilesh Chand", conduct: "Very Good", absentDays: "2 out of 90 days", peGrade: "A", fleGrade: "B", careersGrade: "A", teacherComment: "", marks: { ENG: 51, GEO: 54, HECO: 82 } },
+            { id: 2, name: "Chand, Shresthi Supriya", fatherName: "Suresh Chand", conduct: "Excellent", absentDays: "0 out of 90 days", peGrade: "A", fleGrade: "A", careersGrade: "A", teacherComment: "", marks: { ENG: 38, GEO: 30, HIN: 66 } },
+            { id: 3, name: "Dauloloma, Lepania", fatherName: "Ratu Jnr", conduct: "Good", absentDays: "5 out of 90 days", peGrade: "B", fleGrade: "B", careersGrade: "B", teacherComment: "", marks: { ENG: 32, GEO: 20, VVV: 37 } }
+        ];
+
+        function y1113AddNewSubject() {
+            let subName = prompt("Enter new subject name/code (e.g., PHY, BIO, CHEM):");
+            if (!subName) return;
+            subName = subName.trim().toUpperCase();
+            if (y1113Subjects.includes(subName)) {
+                alert("Subject already exists!");
+                return;
+            }
+            y1113Subjects.push(subName);
+            y1113TeacherInitials[subName] = 'TBA';
+            y1113RenderTable();
+        }
+
+        function y1113UpdateSubjectName(index, newName) {
+            let cleanName = newName.trim().toUpperCase();
+            let oldName = y1113Subjects[index];
+            if (cleanName && oldName !== cleanName) {
+                y1113Subjects[index] = cleanName;
+                y1113Students.forEach(s => {
+                    if (s.marks[oldName] !== undefined) {
+                        s.marks[cleanName] = s.marks[oldName];
+                        delete s.marks[oldName];
+                    }
+                });
+                if (y1113TeacherInitials[oldName]) {
+                    y1113TeacherInitials[cleanName] = y1113TeacherInitials[oldName];
+                    delete y1113TeacherInitials[oldName];
+                }
+                y1113RenderTable();
+            }
+        }
+
+        function y1113GetSubjectAverage(sub) {
+            let vals = y1113Students
+                .map(s => s.marks[sub])
+                .filter(v => v !== undefined && v !== '' && v !== 'ABS')
+                .map(v => parseFloat(v));
+            if (vals.length === 0) return '-';
+            let avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+            return avg.toFixed(1);
+        }
+
+        function y1113GetSubjectGrade(markVal) {
+            if (markVal === 'ABS' || markVal === undefined || markVal === null || markVal === '') return 'ABS';
+            let num = parseFloat(markVal);
+            if (isNaN(num)) return '-';
+            if (num >= 80) return 'A';
+            if (num >= 65) return 'B';
+            if (num >= 50) return 'C';
+            return 'D';
+        }
+
+        function y1113CalculateStudentStats(student) {
+            let numMarks = [];
+            let engMark = 0;
+            let hasEng = false;
+
+            y1113Subjects.forEach((sub, idx) => {
+                let val = student.marks[sub];
+                if (val !== undefined && val !== null && val !== '' && val !== 'ABS') {
+                    let num = parseFloat(val) || 0;
+                    if (idx === 0) {
+                        engMark = num;
+                        hasEng = true;
+                    } else {
+                        numMarks.push(num);
+                    }
+                }
+            });
+
+            let total = (hasEng ? engMark : 0) + numMarks.reduce((a, b) => a + b, 0);
+
+            numMarks.sort((a, b) => b - a);
+            let best3Sum = numMarks.slice(0, 3).reduce((a, b) => a + b, 0);
+            let engPlusBest3 = (hasEng ? engMark : 0) + best3Sum;
+
+            // Percentage based on 500 max mark standard
+            let percentage = (total / 500) * 100;
+
+            let grade = 'D';
+            if (percentage >= 80) grade = 'A';
+            else if (percentage >= 65) grade = 'B';
+            else if (percentage >= 50) grade = 'C';
+
+            return { total, engPlusBest3, percentage, grade };
+        }
+
+        function y1113RenderHeader() {
+            const headerRow = document.getElementById('y1113TableHeaderRow');
+            let html = `
+                <th class="p-2 border border-slate-600 w-10">No</th>
+                <th class="p-2 border border-slate-600 text-left min-w-[180px]">Student Name</th>
+            `;
+
+            y1113Subjects.forEach((sub, idx) => {
+                html += `<th contenteditable="true" onblur="y1113UpdateSubjectName(${idx}, this.innerText)" class="p-2 border border-slate-600" title="Click to edit subject name">${sub}</th>`;
+            });
+
+            html += `
+                <th class="p-2 border border-slate-600 bg-teal-950 font-bold">Total</th>
+                <th class="p-2 border border-slate-600 bg-amber-900 text-amber-200 font-bold">${y1113Subjects[0] || 'ENG'} + BEST 3</th>
+                <th class="p-2 border border-slate-600 bg-slate-900">%</th>
+                <th class="p-2 border border-slate-600 bg-slate-900">Grade</th>
+                <th class="p-2 border border-slate-600 bg-slate-900 no-print w-12">Action</th>
+            `;
+
+            headerRow.innerHTML = html;
+        }
+
+        function y1113RenderTable() {
+            y1113RenderHeader();
+            const tbody = document.getElementById('y1113StudentTbody');
+            tbody.innerHTML = '';
+
+            y1113Students.forEach((student, index) => {
+                const stats = y1113CalculateStudentStats(student);
+                const tr = document.createElement('tr');
+                tr.className = index % 2 === 0 ? 'bg-white hover:bg-teal-50/50' : 'bg-slate-50 hover:bg-teal-50/50';
+
+                let rowHTML = `
+                    <td class="p-2 border border-slate-200 font-semibold text-slate-500">${index + 1}</td>
+                    <td class="p-2 border border-slate-200 text-left font-medium text-slate-900">
+                        <input type="text" value="${student.name}" onchange="y1113UpdateName(${index}, this.value)" class="table-input text-left font-medium" data-row="${index}" data-col="-1" onkeydown="y1113HandleKeyDown(event)">
+                    </td>
+                `;
+
+                y1113Subjects.forEach((sub, subIdx) => {
+                    let val = student.marks[sub] !== undefined ? student.marks[sub] : '';
+                    rowHTML += `
+                        <td class="p-1 border border-slate-200">
+                            <input type="text" value="${val}" onchange="y1113UpdateMark(${index}, '${sub}', this.value)" class="table-input font-mono ${val === 'ABS' ? 'text-red-500 font-bold' : ''}" data-row="${index}" data-col="${subIdx}" onkeydown="y1113HandleKeyDown(event)">
+                        </td>
+                    `;
+                });
+
+                const gradeColor = stats.grade === 'A' || stats.grade === 'B' ? 'bg-emerald-100 text-emerald-800' : 
+                                 stats.grade === 'C' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
+
+                rowHTML += `
+                    <td class="p-2 border border-slate-200 font-bold font-mono text-slate-800">${stats.total}</td>
+                    <td class="p-2 border border-slate-200 font-bold font-mono text-indigo-900 bg-indigo-50/30">${stats.engPlusBest3}</td>
+                    <td class="p-2 border border-slate-200 font-bold font-mono">${stats.percentage.toFixed(1)}%</td>
+                    <td class="p-2 border border-slate-200 font-bold"><span class="px-2 py-0.5 rounded text-xs ${gradeColor}">${stats.grade}</span></td>
+                    <td class="p-2 border border-slate-200 no-print">
+                        <button onclick="y1113DeleteStudent(${index})" class="text-slate-400 hover:text-rose-600 transition font-bold text-sm" title="Delete Student">🗑️</button>
+                    </td>
+                `;
+
+                tr.innerHTML = rowHTML;
+                tbody.appendChild(tr);
+            });
+
+            y1113RenderStatsFooter();
+        }
+
+        function y1113HandleKeyDown(event) {
+            const currentInput = event.target;
+            let r = parseInt(currentInput.getAttribute('data-row'));
+            let c = parseInt(currentInput.getAttribute('data-col'));
+
+            if (['ArrowUp', 'ArrowDown', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+                event.preventDefault();
+            } else {
+                return;
+            }
+
+            let currentVal = currentInput.value.trim().toUpperCase();
+            if (c === -1) {
+                y1113Students[r].name = currentInput.value;
+            } else {
+                const sub = y1113Subjects[c];
+                y1113Students[r].marks[sub] = currentVal === 'ABS' ? 'ABS' : currentVal;
+            }
+
+            let targetRow = r;
+            let targetCol = c;
+
+            switch(event.key) {
+                case 'ArrowRight':
+                    if (c < y1113Subjects.length - 1) {
+                        targetCol = c + 1;
+                    } else if (r < y1113Students.length - 1) {
+                        targetRow = r + 1;
+                        targetCol = 0;
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (c > 0) {
+                        targetCol = c - 1;
+                    } else if (r > 0) {
+                        targetRow = r - 1;
+                        targetCol = y1113Subjects.length - 1;
+                    }
+                    break;
+                case 'ArrowDown':
+                case 'Enter':
+                    if (r < y1113Students.length - 1) {
+                        targetRow = r + 1;
+                    }
+                    break;
+                case 'ArrowUp':
+                    if (r > 0) {
+                        targetRow = r - 1;
+                    }
+                    break;
+            }
+
+            y1113RenderTable();
+
+            requestAnimationFrame(() => {
+                const nextInput = document.querySelector(`#y1113StudentTbody input[data-row="${targetRow}"][data-col="${targetCol}"]`);
+                if (nextInput) {
+                    nextInput.focus();
+                    nextInput.select();
+                }
+            });
+        }
+
+        function y1113UpdateFormTeacherInitials(val) {
+            y1113FormTeacherInitials = val.trim();
+        }
+
+        function y1113UpdateStudentField(index, field, val) {
+            y1113Students[index][field] = val;
+        }
+
+        function y1113RenderStatsFooter() {
+            const tfoot = document.getElementById('y1113StatsTfoot');
+            tfoot.innerHTML = '';
+
+            let satRow = `<tr class="bg-slate-200"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">No. Sat</td>`;
+            let passRow = `<tr class="bg-slate-100"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">No. Pass</td>`;
+            let passPctRow = `<tr class="bg-slate-200"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">% Pass</td>`;
+            let highRow = `<tr class="bg-slate-100"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">Highest Mark</td>`;
+            let lowRow = `<tr class="bg-slate-200"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">Lowest Mark</td>`;
+            let avgRow = `<tr class="bg-slate-100"><td colspan="2" class="p-2 text-right border border-slate-300 font-bold">Average</td>`;
+            let teacherRow = `<tr class="bg-teal-900 text-white"><td colspan="2" class="p-2 text-right border border-slate-700 font-bold">Teacher Initial</td>`;
+
+            y1113Subjects.forEach(sub => {
+                let vals = y1113Students.map(s => s.marks[sub]).filter(v => v !== undefined && v !== '' && v !== 'ABS').map(v => parseFloat(v));
+                let sat = vals.length;
+                let passes = vals.filter(v => v >= 50).length;
+                let passPct = sat > 0 ? ((passes / sat) * 100).toFixed(0) + '%' : '0%';
+                let high = sat > 0 ? Math.max(...vals) : '-';
+                let low = sat > 0 ? Math.min(...vals) : '-';
+                let avg = y1113GetSubjectAverage(sub);
+
+                satRow += `<td class="p-1 border border-slate-300 font-mono">${sat}</td>`;
+                passRow += `<td class="p-1 border border-slate-300 font-mono text-emerald-700">${passes}</td>`;
+                passPctRow += `<td class="p-1 border border-slate-300 font-mono">${passPct}</td>`;
+                highRow += `<td class="p-1 border border-slate-300 font-mono text-indigo-700">${high}</td>`;
+                lowRow += `<td class="p-1 border border-slate-300 font-mono text-red-600">${low}</td>`;
+                avgRow += `<td class="p-1 border border-slate-300 font-mono">${avg}</td>`;
+                
+                teacherRow += `
+                    <td class="p-1 border border-slate-700 font-bold">
+                        <input type="text" value="${y1113TeacherInitials[sub] || ''}" onchange="y1113UpdateTeacherInitial('${sub}', this.value)" class="teacher-initial-input" title="Click to edit teacher initial">
+                    </td>`;
+            });
+
+            const totalStats = y1113Students.map(s => y1113CalculateStudentStats(s));
+            const overallPass = totalStats.filter(s => s.percentage >= 50).length;
+            const overallPassPct = y1113Students.length > 0 ? ((overallPass / y1113Students.length) * 100).toFixed(0) + '%' : '0%';
+
+            satRow += `<td colspan="4" class="border border-slate-300"></td><td class="border border-slate-300 no-print"></td></tr>`;
+            passRow += `<td colspan="4" class="border border-slate-300 text-emerald-700 font-bold">Overall Pass: ${overallPass}</td><td class="border border-slate-300 no-print"></td></tr>`;
+            passPctRow += `<td colspan="4" class="border border-slate-300 font-bold">Overall % Pass: ${overallPassPct}</td><td class="border border-slate-300 no-print"></td></tr>`;
+            highRow += `<td colspan="4" class="border border-slate-300"></td><td class="border border-slate-300 no-print"></td></tr>`;
+            lowRow += `<td colspan="4" class="border border-slate-300"></td><td class="border border-slate-300 no-print"></td></tr>`;
+            avgRow += `<td colspan="4" class="border border-slate-300"></td><td class="border border-slate-300 no-print"></td></tr>`;
+            
+            teacherRow += `
+                <td colspan="4" class="border border-slate-700 font-bold bg-teal-950 text-amber-400">
+                    <span id="y1113FormTeachersInitials" contenteditable="true" onblur="y1113UpdateFormTeacherInitials(this.innerText)" title="Click to edit form teacher initials">
+                        ${y1113FormTeacherInitials}
+                    </span>
+                </td>
+                <td class="border border-slate-700 no-print"></td>
+            </tr>`;
+
+            tfoot.innerHTML = satRow + passRow + passPctRow + highRow + lowRow + avgRow + teacherRow;
+        }
+
+        function y1113HandleCommentSelect(index, selectElem) {
+            let selectedVal = selectElem.value;
+            let textElem = document.getElementById(`y1113CommentText_${index}`);
+            if (selectedVal === 'custom') {
+                textElem.innerText = '';
+                textElem.focus();
+            } else if (selectedVal !== '') {
+                textElem.innerText = selectedVal;
+                y1113Students[index].teacherComment = selectedVal;
+            }
+        }
+
+        function y1113GenerateReportCards() {
+            document.getElementById('y1113MarksheetContainer').classList.add('hidden');
+            const container = document.getElementById('y1113ReportCardContainer');
+            const list = document.getElementById('y1113ReportCardsList');
+            container.classList.remove('hidden');
+            list.innerHTML = '';
+
+            const examTitle = document.getElementById('y1113HeaderExamTitle').innerText.trim();
+            const yearGroup = document.getElementById('y1113HeaderYear').innerText.trim();
+            const formTeachers = document.getElementById('y1113HeaderTeachers').innerText.trim();
+
+            const allPercentages = y1113Students.map(s => y1113CalculateStudentStats(s).percentage);
+            const classAveragePct = (allPercentages.reduce((a, b) => a + b, 0) / (y1113Students.length || 1)).toFixed(1);
+
+            y1113Students.forEach((student, index) => {
+                const stats = y1113CalculateStudentStats(student);
+
+                let defaultComment = student.teacherComment || 
+                    (stats.percentage >= 75 ? 'Outstanding academic performance! Demonstrates exceptional understanding and active class participation.' :
+                     stats.percentage >= 50 ? 'Good overall progress. Capable of higher achievements with consistent revision and focus.' :
+                     'Requires urgent academic improvement and regular study habits. Additional guidance is strongly advised.');
+
+                let subjectRowsHTML = '';
+                y1113Subjects.forEach(sub => {
+                    let val = student.marks[sub];
+                    if (val !== undefined && val !== '' && val !== null) {
+                        let subGrade = y1113GetSubjectGrade(val);
+                        let subAvg = y1113GetSubjectAverage(sub);
+                        
+                        let gradeColor = 'text-slate-800';
+                        if (subGrade === 'A' || subGrade === 'B') gradeColor = 'text-emerald-700 font-bold';
+                        else if (subGrade === 'C') gradeColor = 'text-blue-700 font-bold';
+                        else if (subGrade === 'D' || subGrade === 'ABS') gradeColor = 'text-rose-600 font-bold';
+
+                        subjectRowsHTML += `
+                            <tr class="border-b border-slate-200">
+                                <td class="p-2 font-medium text-left">${sub}</td>
+                                <td class="p-2 font-bold font-mono">${val}</td>
+                                <td class="p-2 font-mono ${gradeColor}">${subGrade}</td>
+                                <td class="p-2 text-slate-600 font-mono font-semibold">${subAvg}</td>
+                                <td class="p-2 text-slate-600 font-bold">${y1113TeacherInitials[sub] || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                if (!subjectRowsHTML) {
+                    subjectRowsHTML = `<tr><td colspan="5" class="p-4 text-slate-400 italic">No subject marks recorded.</td></tr>`;
+                }
+
+                const cardHTML = `
+                    <div class="report-card-page bg-white border border-slate-300 rounded-xl p-8 shadow-md mb-8">
+                        
+                        <!-- OFFICIAL LETTERHEAD HEADER -->
+                        <div class="border-2 border-blue-900 rounded-2xl p-4 text-center mb-1 relative bg-white">
+                            <div class="flex items-center justify-between px-2">
+                                <div class="w-20 h-20 flex items-center justify-center">
+                                    <img src="khanda.png" data-logo-index="0" onerror="tryNextKhandaLogo(this)" alt="Khanda Logo" class="w-full h-full object-contain">
+                                </div>
+
+                                <div class="flex-1 px-4">
+                                    <h1 class="text-3xl md:text-5xl font-black text-blue-900 tracking-wider font-serif uppercase">
+                                        KHALSA COLLEGE
+                                    </h1>
+                                    <p class="text-l font-bold text-blue-900 mt-1">
+                                        P. O. Box, 171, Ba, Fiji Islands
+                                    </p>
+                                    <p class="text-l text-blue-900 font-semibold">
+                                        Telephone: 6674451/ Fax: (679) 6675766/ Email: <a href="mailto:info@khalsafiji.com" class="underline text-blue-800">info@khalsafiji.com</a>
+                                    </p>
+                                </div>
+
+                                <div class="w-20 h-20 flex items-center justify-center">
+                                    <img src="khanda.png" data-logo-index="0" onerror="tryNextKhandaLogo(this)" alt="Khanda Logo" class="w-full h-full object-contain">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Managing Authority Banner -->
+                        <div class="text-center mb-6">
+                            <p class="text-xs font-black text-blue-950 uppercase tracking-tight">
+                                (MANAGING AUTHORITY: SIKH EDUCATIONAL SOCIETY OF FIJI)
+                            </p>
+                            <div class="flex justify-between items-center text-xs font-bold text-black mt-1 px-2 border-b border-slate-300 pb-2">
+                                <span>PRINCIPAL: Navin Singh</span>
+                                <span>MANAGER: Gurbhajan Singh</span>
+                            </div>
+                        </div>
+
+                        <!-- Exam & Class Info -->
+                        <div class="text-center mb-4 bg-slate-100 py-2 rounded-lg border border-slate-200">
+                            <h2 class="text-base font-bold text-teal-950 uppercase">${examTitle}</h2>
+                            <p class="text-xs text-slate-600 mt-0.5">Year Level: <span class="font-bold text-slate-900">${yearGroup}</span> | Form Teachers: <span class="font-bold text-slate-900">${formTeachers}</span></p>
+                        </div>
+
+                        <!-- Student Information -->
+                        <div class="bg-slate-50 p-3 rounded-lg mb-4 border border-slate-200 flex justify-between items-center">
+                            <div class="grid grid-cols-2 gap-4 flex-1 pr-4">
+                                <div>
+                                    <p class="text-[10px] text-slate-500 uppercase font-semibold">Student Name</p>
+                                    <p contenteditable="true" onblur="y1113UpdateStudentField(${index}, 'name', this.innerText)" class="text-base font-bold text-slate-900 cursor-pointer hover:bg-slate-200/50 rounded px-1">${student.name}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-slate-500 uppercase font-semibold">Father's Name</p>
+                                    <p contenteditable="true" onblur="y1113UpdateStudentField(${index}, 'fatherName', this.innerText)" class="text-base font-semibold text-slate-800 cursor-pointer hover:bg-slate-200/50 rounded px-1">${student.fatherName || 'Enter Father\'s Name'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subject Breakdown Table -->
+                        <table class="w-full text-center text-xs border border-slate-200 rounded-lg overflow-hidden mb-4">
+                            <thead class="bg-slate-800 text-white font-semibold uppercase">
+                                <tr>
+                                    <th class="p-2 text-left">Subject</th>
+                                    <th class="p-2">Marks Gained</th>
+                                    <th class="p-2">Grade</th>
+                                    <th class="p-2">Average</th>
+                                    <th class="p-2">Teacher</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${subjectRowsHTML}
+                            </tbody>
+                        </table>
+
+                        <!-- Results Summary -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-center">
+                            <div class="p-2.5 bg-teal-50 border border-teal-200 rounded-lg">
+                                <p class="text-[10px] uppercase font-bold text-teal-700">Grand Total</p>
+                                <p class="text-base font-bold text-teal-900 font-mono">${stats.total}</p>
+                            </div>
+                            <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+                                <p class="text-[10px] uppercase font-bold text-amber-700">${y1113Subjects[0] || 'ENG'} + Best 3</p>
+                                <p class="text-base font-bold text-amber-900 font-mono">${stats.engPlusBest3}</p>
+                            </div>
+                            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg">
+                                <p class="text-[10px] uppercase font-bold text-emerald-700">Percentage (%)</p>
+                                <p class="text-base font-bold text-emerald-900 font-mono">${stats.percentage.toFixed(1)}%</p>
+                            </div>
+                            <div class="p-2.5 bg-purple-50 border border-purple-200 rounded-lg">
+                                <p class="text-[10px] uppercase font-bold text-purple-700">Overall Grade</p>
+                                <p class="text-base font-bold text-purple-900 font-mono">${stats.grade}</p>
+                            </div>
+                        </div>
+
+                        <!-- Class Average Indicator -->
+                        <div class="text-xs text-slate-500 mb-4 bg-slate-50 p-2 rounded text-center border">
+                            Class Average Benchmark: <span class="font-bold text-slate-800">${classAveragePct}%</span>
+                        </div>
+
+                        <!-- CORE NON-ACADEMIC SUBJECT GRADES, CONDUCT & ATTENDANCE -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
+                            <!-- Core Subject Grades -->
+                            <div>
+                                <h4 class="font-bold uppercase text-teal-950 mb-2 border-b pb-1">Core Non-Academic Subjects</h4>
+                                <div class="space-y-1.5">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-slate-700">Physical Education:</span>
+                                        <select onchange="y1113UpdateStudentField(${index}, 'peGrade', this.value)" class="bg-white border rounded px-2 py-0.5 font-bold text-teal-900 outline-none">
+                                            <option value="A" ${student.peGrade === 'A' ? 'selected' : ''}>A</option>
+                                            <option value="B" ${student.peGrade === 'B' ? 'selected' : ''}>B</option>
+                                            <option value="C" ${student.peGrade === 'C' ? 'selected' : ''}>C</option>
+                                            <option value="D" ${student.peGrade === 'D' ? 'selected' : ''}>D</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-slate-700">FLE (Family Life Education):</span>
+                                        <select onchange="y1113UpdateStudentField(${index}, 'fleGrade', this.value)" class="bg-white border rounded px-2 py-0.5 font-bold text-teal-900 outline-none">
+                                            <option value="A" ${student.fleGrade === 'A' ? 'selected' : ''}>A</option>
+                                            <option value="B" ${student.fleGrade === 'B' ? 'selected' : ''}>B</option>
+                                            <option value="C" ${student.fleGrade === 'C' ? 'selected' : ''}>C</option>
+                                            <option value="D" ${student.fleGrade === 'D' ? 'selected' : ''}>D</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-slate-700">Careers:</span>
+                                        <select onchange="y1113UpdateStudentField(${index}, 'careersGrade', this.value)" class="bg-white border rounded px-2 py-0.5 font-bold text-teal-900 outline-none">
+                                            <option value="A" ${student.careersGrade === 'A' ? 'selected' : ''}>A</option>
+                                            <option value="B" ${student.careersGrade === 'B' ? 'selected' : ''}>B</option>
+                                            <option value="C" ${student.careersGrade === 'C' ? 'selected' : ''}>C</option>
+                                            <option value="D" ${student.careersGrade === 'D' ? 'selected' : ''}>D</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Conduct & Attendance -->
+                            <div>
+                                <h4 class="font-bold uppercase text-teal-950 mb-2 border-b pb-1">Conduct & Attendance</h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <label class="font-medium text-slate-700">Conduct:</label>
+                                        <select onchange="y1113UpdateStudentField(${index}, 'conduct', this.value)" class="bg-white border rounded px-2 py-0.5 font-semibold text-slate-800 outline-none">
+                                            <option value="Excellent" ${student.conduct === 'Excellent' ? 'selected' : ''}>Excellent</option>
+                                            <option value="Very Good" ${student.conduct === 'Very Good' ? 'selected' : ''}>Very Good</option>
+                                            <option value="Good" ${student.conduct === 'Good' ? 'selected' : ''}>Good</option>
+                                            <option value="Satisfactory" ${student.conduct === 'Satisfactory' ? 'selected' : ''}>Satisfactory</option>
+                                            <option value="Needs Improvement" ${student.conduct === 'Needs Improvement' ? 'selected' : ''}>Needs Improvement</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-slate-700">Absent:</span>
+                                        <span contenteditable="true" onblur="y1113UpdateStudentField(${index}, 'absentDays', this.innerText)" class="font-semibold text-slate-800 bg-white border rounded px-2 py-0.5 cursor-pointer hover:bg-amber-50">
+                                            ${student.absentDays || '0 out of 90 days'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Editable Comments with Dropdown Presets -->
+                        <div class="space-y-3 border-t border-slate-200 pt-3">
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5 no-print">
+                                    <label class="block text-xs font-bold uppercase text-slate-600">Form Teacher's Remarks Preset:</label>
+                                    <select onchange="y1113HandleCommentSelect(${index}, this)" class="bg-white border border-slate-300 rounded px-2 py-1 text-xs font-semibold text-slate-700 outline-none">
+                                        <option value="">-- Choose Comment Preset --</option>
+                                        <optgroup label="High Achievers">
+                                            <option value="Outstanding academic performance! Demonstrates exceptional understanding and leadership in class.">Outstanding performance & leadership</option>
+                                            <option value="Excellent results. Consistently displays diligence, critical thinking, and active participation.">Excellent diligence & critical thinking</option>
+                                        </optgroup>
+                                        <optgroup label="Middle Achievers">
+                                            <option value="Good overall progress. Capable of higher achievements with consistent revision and focus.">Good effort, needs revision</option>
+                                            <option value="Satisfactory progress. Needs to focus more on key subjects to boost overall performance.">Satisfactory, focus on weak areas</option>
+                                        </optgroup>
+                                        <optgroup label="Low Achievers">
+                                            <option value="Requires urgent academic improvement and regular study habits. Additional guidance is strongly advised.">Urgent improvement & guidance needed</option>
+                                            <option value="Needs to dedicate significantly more time to studies and seek assistance when needed.">Needs more dedication & support</option>
+                                        </optgroup>
+                                        <option value="custom">✏️ Custom Comment (Clear & Edit)</option>
+                                    </select>
+                                </div>
+                                
+                                <div id="y1113CommentText_${index}" contenteditable="true" onblur="y1113UpdateStudentField(${index}, 'teacherComment', this.innerText)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded text-xs min-h-[50px] text-slate-700 leading-relaxed outline-none focus:bg-white focus:border-amber-500" title="Click to edit teacher comments">
+                                    ${defaultComment}
+                                </div>
+                            </div>
+
+                            <div class="pt-5 flex justify-between items-end text-xs font-bold text-slate-600">
+                                <div>
+                                    <p class="border-t border-slate-400 pt-1 w-56 text-center">Signature of Parent/Guardian</p>
+                                </div>
+                                <div>
+                                    <p class="border-t border-slate-400 pt-1 w-64 text-center">Principal/ V. Principal/ Asst. Principal</p>
+                                </div>
+                            </div>
+
+                            <!-- Invalidating Disclaimer -->
+                            <div class="pt-4 text-center">
+                                <p class="text-[9px] text-slate-500 italic tracking-tight">
+                                    * Note: Alterations, erasures or use of correcting fluid automatically invalidate this document.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += cardHTML;
+            });
+        }
+
+        function y1113ShowMarksheet() {
+            document.getElementById('y1113ReportCardContainer').classList.add('hidden');
+            document.getElementById('y1113MarksheetContainer').classList.remove('hidden');
+        }
+
+        function y1113UpdateTeacherInitial(sub, val) {
+            y1113TeacherInitials[sub] = val.trim().toUpperCase();
+        }
+
+        function y1113UpdateMark(index, sub, val) {
+            y1113Students[index].marks[sub] = val.trim().toUpperCase() === 'ABS' ? 'ABS' : val;
+            y1113RenderTable();
+        }
+
+        function y1113UpdateName(index, val) {
+            y1113Students[index].name = val;
+        }
+
+        function y1113AddNewStudent() {
+            y1113Students.push({ 
+                id: y1113Students.length + 1, 
+                name: "New Student Name", 
+                fatherName: "Father's Name",
+                conduct: "Good",
+                absentDays: "0 out of 90 days",
+                peGrade: "B",
+                fleGrade: "B",
+                careersGrade: "B",
+                teacherComment: "",
+                marks: {} 
+            });
+            y1113RenderTable();
+        }
+
+        function y1113DeleteStudent(index) {
+            const studentName = y1113Students[index].name || "this student";
+            if (confirm(`Are you sure you want to delete ${studentName}?`)) {
+                y1113Students.splice(index, 1);
+                y1113RenderTable();
+            }
+        }
+
+        function y1113ClearAllMarks() {
+            if (confirm("Clear all marks for Year 11-13?")) {
+                y1113Students.forEach(s => s.marks = {});
+                y1113RenderTable();
+            }
+        }
+
+        function y1113ExportToJSON() {
+            const exportData = {
+                school: document.getElementById('y1113HeaderSchool').innerText.trim(),
+                exam: document.getElementById('y1113HeaderExamTitle').innerText.trim(),
+                year: document.getElementById('y1113HeaderYear').innerText.trim(),
+                formTeachers: document.getElementById('y1113HeaderTeachers').innerText.trim(),
+                subjects: y1113Subjects,
+                formTeacherInitials: y1113FormTeacherInitials,
+                teacherInitials: y1113TeacherInitials,
+                exportedAt: new Date().toISOString(),
+                students: y1113Students
+            };
+            saveMarksheetJSON(exportData, `Year_11-13_${exportData.year.replace(/[^a-zA-Z0-9_-]/g, '_')}_${exportData.exam.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`);
+        }
+
+        function y1113TriggerJSONLoad() {
+            document.getElementById('y1113JsonFileInput').click();
+        }
+
+        function y1113ImportFromJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    if (data.school) document.getElementById('y1113HeaderSchool').innerText = data.school;
+                    if (data.exam) document.getElementById('y1113HeaderExamTitle').innerText = data.exam;
+                    if (data.year) document.getElementById('y1113HeaderYear').innerText = data.year;
+                    if (data.formTeachers) {
+                        document.getElementById('y1113HeaderTeachers').innerText = Array.isArray(data.formTeachers) 
+                            ? data.formTeachers.join(' & ') 
+                            : data.formTeachers;
+                    }
+                    if (data.subjects && Array.isArray(data.subjects)) {
+                        y1113Subjects = data.subjects;
+                    }
+                    if (data.formTeacherInitials) {
+                        y1113FormTeacherInitials = data.formTeacherInitials;
+                    }
+                    if (data.teacherInitials) {
+                        y1113TeacherInitials = { ...y1113TeacherInitials, ...data.teacherInitials };
+                    }
+
+                    y1113Students = Array.isArray(data) ? data : (data.students || []);
+                    y1113RenderTable();
+                } catch (err) {
+                    alert("Error loading JSON file!");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function y1113FilterTable() {
+            let input = document.getElementById("y1113SearchInput").value.toUpperCase();
+            let rows = document.querySelectorAll("#y1113StudentTbody tr");
+            rows.forEach(row => {
+                let nameInput = row.querySelector("td:nth-child(2) input");
+                if (nameInput) {
+                    let text = nameInput.value || "";
+                    row.style.display = text.toUpperCase().indexOf(input) > -1 ? "" : "none";
+                }
+            });
+        }
+
+        // Initialize Portal on page load
+        window.onload = function() {
+            switchView('portal');
+        };
+    </script>
+</body>
+</html>
