@@ -105,6 +105,21 @@
                 color: #000 !important;
                 box-shadow: none !important;
             }
+
+            /* Form Teacher Remarks - print at the bottom of each marksheet */
+            .marksheet-form-teacher-remarks {
+                margin-top: 18px !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                display: block !important;
+            }
+            .marksheet-form-teacher-remarks textarea {
+                border: 1px solid #94a3b8 !important;
+                background: #fff !important;
+                color: #000 !important;
+                min-height: 80px !important;
+                resize: none !important;
+            }
         }
     </style>
 </head>
@@ -344,6 +359,16 @@
                         </table>
                     </div>
 
+                    <!-- FORM TEACHER COMMENTS / REMARKS -->
+                    <div class="marksheet-form-teacher-remarks mt-5 mx-4 mb-5 p-4 bg-slate-50 border border-slate-300 rounded-lg">
+                        <div class="flex items-center justify-between gap-3 mb-2">
+                            <label for="y910FormTeacherRemarks" class="text-sm font-bold uppercase text-indigo-950">
+                                Form Teacher's Comments / Remarks
+                            </label>                            
+                        </div>
+                        <textarea id="y910FormTeacherRemarks" rows="3" oninput="y910UpdateFormTeacherRemarks(this.value)" placeholder="Enter the Form Teacher's comments or remarks for this marksheet..." class="w-full p-3 bg-white border border-slate-300 rounded-md text-sm text-slate-800 leading-relaxed outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+
                 </div>
 
                 <!-- Y9-10 REPORT CARD CONTAINER -->
@@ -451,6 +476,16 @@
                         </table>
                     </div>
 
+                    <!-- FORM TEACHER COMMENTS / REMARKS -->
+                    <div class="marksheet-form-teacher-remarks mt-5 mx-4 mb-5 p-4 bg-slate-50 border border-slate-300 rounded-lg">
+                        <div class="flex items-center justify-between gap-3 mb-2">
+                            <label for="y1113FormTeacherRemarks" class="text-sm font-bold uppercase text-teal-950">
+                                Form Teacher's Comments / Remarks
+                            </label>
+                        </div>
+                        <textarea id="y1113FormTeacherRemarks" rows="3" oninput="y1113UpdateFormTeacherRemarks(this.value)" placeholder="Enter the Form Teacher's comments or remarks for this marksheet..." class="w-full p-3 bg-white border border-slate-300 rounded-md text-sm text-slate-800 leading-relaxed outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+                    </div>
+
                 </div>
 
                 <!-- Y11-13 REPORT CARD CONTAINER -->
@@ -543,6 +578,7 @@
 
         let y910Subjects = ['ENG', 'MATHS', 'COMM', 'SOCIAL', 'BSC', 'AGRI', 'BA', 'BTECH', 'HECO'];
         let y910FormTeacherInitials = "ASK / AC";
+        let y910FormTeacherRemarks = "";
         let y910TeacherInitials = {
             'ENG': 'RV', 'MATHS': 'AS', 'COMM': 'NP', 'SOCIAL': 'AC', 
             'BSC': 'MD', 'AGRI': 'SSM', 'BA': 'CR', 'BTECH': 'AK', 'HECO': 'PN'
@@ -761,6 +797,10 @@
 
         function y910UpdateFormTeacherInitials(val) {
             y910FormTeacherInitials = val.trim();
+        }
+
+        function y910UpdateFormTeacherRemarks(val) {
+            y910FormTeacherRemarks = val;
         }
 
         function y910UpdateStudentField(index, field, val) {
@@ -1182,6 +1222,7 @@
                 formTeachers: document.getElementById('y910HeaderTeachers').innerText.trim(),
                 subjects: y910Subjects,
                 formTeacherInitials: y910FormTeacherInitials,
+                formTeacherRemarks: y910FormTeacherRemarks,
                 teacherInitials: y910TeacherInitials,
                 exportedAt: new Date().toISOString(),
                 students: y910Students
@@ -1214,6 +1255,11 @@
                     }
                     if (data.formTeacherInitials) {
                         y910FormTeacherInitials = data.formTeacherInitials;
+                    }
+                    if (data.formTeacherRemarks !== undefined) {
+                        y910FormTeacherRemarks = data.formTeacherRemarks;
+                        const remarksBox = document.getElementById('y910FormTeacherRemarks');
+                        if (remarksBox) remarksBox.value = y910FormTeacherRemarks;
                     }
                     if (data.teacherInitials) {
                         y910TeacherInitials = { ...y910TeacherInitials, ...data.teacherInitials };
@@ -1248,6 +1294,7 @@
         // ==========================================
         let y1113Subjects = ['ENG', 'MATHS', 'HST', 'GEO', 'BA', 'ECO', 'COMP', 'HECO', 'VVV', 'HIN', 'AT', 'TD', 'AGR'];
         let y1113FormTeacherInitials = "AC / ASK";
+        let y1113FormTeacherRemarks = "";
         let y1113TeacherInitials = {
             'ENG': 'RV', 'MATHS': 'AS', 'HST': 'RG', 'GEO': 'AC', 'BA': 'CR', 
             'ECO': 'MC', 'COMP': 'SC/CR', 'HECO': 'PN', 'VVV': 'AV', 'HIN': 'MS', 
@@ -1480,6 +1527,10 @@
 
         function y1113UpdateFormTeacherInitials(val) {
             y1113FormTeacherInitials = val.trim();
+        }
+
+        function y1113UpdateFormTeacherRemarks(val) {
+            y1113FormTeacherRemarks = val;
         }
 
         function y1113UpdateStudentField(index, field, val) {
@@ -1872,6 +1923,7 @@
                 formTeachers: document.getElementById('y1113HeaderTeachers').innerText.trim(),
                 subjects: y1113Subjects,
                 formTeacherInitials: y1113FormTeacherInitials,
+                formTeacherRemarks: y1113FormTeacherRemarks,
                 teacherInitials: y1113TeacherInitials,
                 exportedAt: new Date().toISOString(),
                 students: y1113Students
@@ -1904,6 +1956,11 @@
                     }
                     if (data.formTeacherInitials) {
                         y1113FormTeacherInitials = data.formTeacherInitials;
+                    }
+                    if (data.formTeacherRemarks !== undefined) {
+                        y1113FormTeacherRemarks = data.formTeacherRemarks;
+                        const remarksBox = document.getElementById('y1113FormTeacherRemarks');
+                        if (remarksBox) remarksBox.value = y1113FormTeacherRemarks;
                     }
                     if (data.teacherInitials) {
                         y1113TeacherInitials = { ...y1113TeacherInitials, ...data.teacherInitials };
